@@ -1,6 +1,8 @@
 # bbzsh
 
-A tiny personal replacement for oh-my-zsh. Two modules: a git-aware prompt and a completion bootstrap.
+`bbzsh` is a small personal zsh setup that replaces the parts of
+oh-my-zsh this repo needs: completions and a git-aware prompt. It has no
+plugin manager, theme engine, background updater, or generated config.
 
 ## Install
 
@@ -10,20 +12,44 @@ Source the entry point from `~/.zshrc`:
 source "$HOME/dev/shell-tools/bbzsh.zsh"
 ```
 
-That's it. No plugin manager, no theme engine, no autoupdates.
+Open a new shell, or reload your current one:
 
-## Layout
+```zsh
+source ~/.zshrc
+```
 
-- `bbzsh.zsh` — entry point, sources the other modules.
-- `prompt.zsh` — robbyrussell-style prompt with `git:(branch)✗` segment.
-- `completions.zsh` — adds Homebrew completion dirs to `fpath`, runs `compinit`, enables menu-select and case-insensitive matching.
+## What It Does
 
-## Adding a module
+- Adds Homebrew zsh completion directories to `fpath` when they exist.
+- Runs `compinit`.
+- Enables menu selection for completions.
+- Enables case-insensitive and substring completion matching.
+- Enables colorized `ls` output on macOS, BSD, and Linux.
+- Sets a robbyrussell-style prompt with the current path and git branch.
+- Shows a dirty marker in the prompt when the current git worktree has changes.
 
-Drop a new `something.zsh` next to the existing files and source it from `bbzsh.zsh`:
+## Files
+
+- `bbzsh.zsh`: entry point sourced by `.zshrc`.
+- `ls.zsh`: colorized `ls` setup and common aliases.
+- `completions.zsh`: completion bootstrap and completion styles.
+- `prompt.zsh`: prompt setup plus small git helper functions.
+- `local.zsh`: optional local-only overrides; ignored by git.
+
+## Customization
+
+Add shared modules as sibling `.zsh` files and source them from `bbzsh.zsh`:
 
 ```zsh
 source "${_bbzsh_dir}/something.zsh"
 ```
 
-Local-only overrides go in `local.zsh` (gitignored).
+Put machine-specific or private settings in `local.zsh`.
+
+## Validation
+
+Check zsh syntax without loading the files:
+
+```zsh
+zsh -n bbzsh.zsh ls.zsh completions.zsh prompt.zsh
+```
