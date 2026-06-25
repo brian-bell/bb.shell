@@ -1,4 +1,4 @@
-# bbbash entry point. Sourced from ~/.bashrc.
+# bb.bash entry point. Sourced from ~/.bashrc.
 _bbbash_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${_bbbash_dir}/ls.bash"
 source "${_bbbash_dir}/completions.bash"

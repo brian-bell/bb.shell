@@ -1,4 +1,4 @@
-# bbzsh / bbbash
+# bb.zsh / bb.bash
 
 A small personal shell setup that replaces the parts of oh-my-zsh this repo
 needs: completions and a git-aware prompt. It has no plugin manager, theme
@@ -6,8 +6,8 @@ engine, background updater, or generated config.
 
 Two parallel ports ship the same behavior:
 
-- **zsh** — `bbzsh.zsh` (`*.zsh` modules)
-- **bash** — `bbbash.bash` (`*.bash` modules), works on Linux and macOS
+- **zsh** — `bb.zsh` (`*.zsh` modules)
+- **bash** — `bb.bash` (`*.bash` modules), works on Linux and macOS
   (compatible with bash 3.2+)
 
 ## Install
@@ -17,7 +17,7 @@ Two parallel ports ship the same behavior:
 Source the entry point from `~/.zshrc`:
 
 ```zsh
-source "$HOME/dev/bb.shell/bbzsh.zsh"
+source "$HOME/dev/bb.shell/bb.zsh"
 ```
 
 ### bash
@@ -25,7 +25,7 @@ source "$HOME/dev/bb.shell/bbzsh.zsh"
 Source the entry point from `~/.bashrc`:
 
 ```bash
-source "$HOME/dev/bb.shell/bbbash.bash"
+source "$HOME/dev/bb.shell/bb.bash"
 ```
 
 Open a new shell, or reload your current one (`source ~/.zshrc` or
@@ -46,7 +46,7 @@ Open a new shell, or reload your current one (`source ~/.zshrc` or
 
 zsh:
 
-- `bbzsh.zsh`: entry point sourced by `.zshrc`.
+- `bb.zsh`: entry point sourced by `.zshrc`.
 - `ls.zsh`: colorized `ls` setup and common aliases.
 - `completions.zsh`: completion bootstrap and completion styles.
 - `prompt.zsh`: prompt setup plus small git helper functions.
@@ -56,7 +56,7 @@ zsh:
 
 bash:
 
-- `bbbash.bash`: entry point sourced by `.bashrc`.
+- `bb.bash`: entry point sourced by `.bashrc`.
 - `ls.bash`: colorized `ls` setup and common aliases.
 - `completions.bash`: `bash-completion` bootstrap and readline tweaks.
 - `prompt.bash`: prompt setup plus small git helper functions.
@@ -82,10 +82,10 @@ Put machine-specific or private settings in `local.zsh` / `local.bash`.
 Check syntax without loading the files, and run the bash prompt tests:
 
 ```zsh
-zsh -n bbzsh.zsh ls.zsh completions.zsh prompt.zsh
+zsh -n bb.zsh ls.zsh completions.zsh prompt.zsh
 ```
 
 ```bash
-bash -n bbbash.bash ls.bash completions.bash prompt.bash
+bash -n bb.bash ls.bash completions.bash prompt.bash
 bash tests/test_prompt.bash
 ```
