@@ -110,6 +110,27 @@ else
 fi
 rm -f "$marker"
 
+# --- a malicious directory name cannot execute commands -----------------
+# PS1 uses \w for the cwd. bash quotes the value it substitutes for \w before
+# re-expanding PS1, so a directory literally named $(...) must render inert.
+# This guards that protection (and catches anyone swapping \w for a raw path).
+mkdir -p "$tmp/evilcwd"
+cd "$tmp/evilcwd"
+evilname='$(touch${IFS}PWNED_CWD)'   # literal dir name carrying a payload
+mkdir -p "$evilname"
+cd "$evilname"
+rm -f PWNED_CWD
+( exit 0 ); _bb_set_prompt
+if [ "${BASH_VERSINFO[0]}" -gt 4 ] || { [ "${BASH_VERSINFO[0]}" -eq 4 ] && [ "${BASH_VERSINFO[1]}" -ge 4 ]; }; then
+  : "${PS1@P}"
+  [ -e PWNED_CWD ] && fail "directory name injected a command (PS1@P)" \
+                   || ok "malicious directory name does not execute (PS1@P)"
+else
+  printf 'skip - cwd injection render test (bash %s, no @P path)\n' "$BASH_VERSION"
+fi
+rm -f PWNED_CWD
+cd "$tmp"
+
 echo
 if [ "$fails" -eq 0 ]; then
   echo "All prompt tests passed."

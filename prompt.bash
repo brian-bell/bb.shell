@@ -15,6 +15,11 @@ _bb_git_branch() {
   ref=$(command git symbolic-ref --short HEAD 2>/dev/null) \
     || ref=$(command git rev-parse --short HEAD 2>/dev/null) \
     || return 1
+  # The branch name is baked into PS1 as literal text, which bash re-expands on
+  # every draw while `promptvars` is on (see below). Strip the only characters
+  # that can trigger expansion there -- $, backtick, backslash -- so a hostile
+  # branch like `p$(rm -rf ~)` renders as inert text instead of executing.
+  ref=${ref//[\$\`\\]/}
   printf '%s' "$ref"
 }
 
@@ -43,12 +48,17 @@ _bb_set_prompt() {
   PS1="${arrow} ${_bb_c_cyan}\w${_bb_c_reset}$(_bb_git_segment) ${_bb_c_magenta}\$${_bb_c_reset} "
 }
 
-# Security: with `promptvars` on (the default), bash re-expands $(...), `...`,
-# and ${...} found in PS1 on every render. Since we bake the live git branch
-# name into PS1, a branch like `p$(rm -rf ~)` would execute on prompt draw.
-# We never rely on promptvars (PS1 holds only literal \-escapes built via real
-# command substitution in PROMPT_COMMAND), so disable it. Do not re-enable.
-shopt -u promptvars
+# Keep `promptvars` on (its default). Shell integrations -- ghostty, iTerm2,
+# kitty, atuin, etc. -- register their preexec hook as a $(...) in PS0/PS1 and
+# rely on this option to run it; with it off the hook prints literally instead.
+#
+# The flip side is that promptvars makes bash re-expand $(...), `...`, and
+# ${...} in PS1 on every draw. The one piece of attacker-controlled text we bake
+# in as literal text is the git branch name, which is why _bb_git_branch strips
+# the expansion characters from it. The cwd (\w) is safe: bash quotes the value
+# it substitutes for \w before that re-expansion pass, so a directory named
+# `$(...)` renders inert (verified by the cwd test in tests/test_prompt.bash).
+shopt -s promptvars
 
 # Register the hook without clobbering an existing PROMPT_COMMAND. This assumes
 # the scalar form; if a distro uses the bash 5.1+ array form the worst case is a
