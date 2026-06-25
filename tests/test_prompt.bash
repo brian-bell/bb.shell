@@ -64,6 +64,52 @@ git -C "$tmp/clean" checkout -q "$sha" 2>/dev/null
 ( exit 0 ); _bbbash_set_prompt
 assert_contains "$PS1" "$sha" "detached HEAD shows short sha"
 
+# --- prompt escape markers are balanced ---------------------------------
+# Every \[ must have a matching \] or bash miscounts prompt width and corrupts
+# line wrapping. Count without rendering so this runs on any bash.
+cd "$tmp/clean" 2>/dev/null || cd "$tmp"
+( exit 0 ); _bbbash_set_prompt
+no_open=${PS1//\\\[/}
+no_close=${PS1//\\\]/}
+opens=$(( (${#PS1} - ${#no_open}) / 2 ))
+closes=$(( (${#PS1} - ${#no_close}) / 2 ))
+if [ "$opens" -eq "$closes" ] && [ "$opens" -gt 0 ]; then
+  ok "prompt \\[ and \\] markers are balanced ($opens each)"
+else
+  fail "prompt \\[/\\] markers unbalanced ($opens open, $closes close)"
+fi
+
+# --- a malicious branch name cannot execute commands --------------------
+# bash re-expands $(...) in PS1 unless promptvars is disabled. Render the
+# prompt the way bash draws it and assert the payload never runs.
+marker="$tmp/PWNED"
+rm -f "$marker"
+mkdir -p "$tmp/evil"
+cd "$tmp/evil"
+git init -q
+git config user.email t@t.t
+git config user.name t
+echo x > seed && git add -A && git commit -qm seed
+# Branch name contains a command substitution; ${IFS} avoids a literal space.
+evil_branch='p$(touch${IFS}'"$marker"')'
+git checkout -q -b "$evil_branch" 2>/dev/null
+( exit 0 ); _bbbash_set_prompt
+if [ "${BASH_VERSINFO[0]}" -gt 4 ] || { [ "${BASH_VERSINFO[0]}" -eq 4 ] && [ "${BASH_VERSINFO[1]}" -ge 4 ]; }; then
+  # ${PS1@P} expands exactly as the prompt is drawn, side effects included.
+  : "${PS1@P}"
+  [ -e "$marker" ] && fail "branch name injected a command (PS1@P)" \
+                   || ok "malicious branch name does not execute (PS1@P)"
+elif command -v script >/dev/null 2>&1 && [ "$(uname)" = "Darwin" ]; then
+  printf 'true\nexit\n' | script -q /dev/null /bin/bash \
+    --rcfile <(printf 'cd %q\nsource %q\n' "$tmp/evil" "$repo/prompt.bash") -i \
+    >/dev/null 2>&1
+  [ -e "$marker" ] && fail "branch name injected a command (pty)" \
+                   || ok "malicious branch name does not execute (pty)"
+else
+  printf 'skip - injection render test (bash %s, no @P/pty path)\n' "$BASH_VERSION"
+fi
+rm -f "$marker"
+
 echo
 if [ "$fails" -eq 0 ]; then
   echo "All prompt tests passed."

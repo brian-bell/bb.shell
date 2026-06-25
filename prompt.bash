@@ -43,7 +43,16 @@ _bbbash_set_prompt() {
   PS1="${arrow} ${_bbbash_c_cyan}\w${_bbbash_c_reset}$(_bbbash_git_segment) ${_bbbash_c_magenta}\$${_bbbash_c_reset} "
 }
 
-# Register the hook without clobbering an existing PROMPT_COMMAND.
+# Security: with `promptvars` on (the default), bash re-expands $(...), `...`,
+# and ${...} found in PS1 on every render. Since we bake the live git branch
+# name into PS1, a branch like `p$(rm -rf ~)` would execute on prompt draw.
+# We never rely on promptvars (PS1 holds only literal \-escapes built via real
+# command substitution in PROMPT_COMMAND), so disable it. Do not re-enable.
+shopt -u promptvars
+
+# Register the hook without clobbering an existing PROMPT_COMMAND. This assumes
+# the scalar form; if a distro uses the bash 5.1+ array form the worst case is a
+# duplicate registration, which is harmless.
 case ";${PROMPT_COMMAND:-};" in
   *";_bbbash_set_prompt;"*) ;;
   *) PROMPT_COMMAND="_bbbash_set_prompt${PROMPT_COMMAND:+;$PROMPT_COMMAND}" ;;

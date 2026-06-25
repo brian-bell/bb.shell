@@ -33,13 +33,14 @@ Open a new shell, or reload your current one (`source ~/.zshrc` or
 
 ## What It Does
 
-- Adds Homebrew zsh completion directories to `fpath` when they exist.
-- Runs `compinit`.
-- Enables menu selection for completions.
-- Enables case-insensitive and substring completion matching.
+- Bootstraps the completion system: `compinit` with Homebrew `fpath`
+  directories on zsh, the `bash-completion` package on bash.
+- Enables menu-style, case-insensitive completion (plus substring matching on
+  zsh, which has no native bash equivalent).
 - Enables colorized `ls` output on macOS, BSD, and Linux.
 - Sets a robbyrussell-style prompt with the current path and git branch.
 - Shows a dirty marker in the prompt when the current git worktree has changes.
+- Sources `local.zsh` / `local.bash` for machine-specific overrides if present.
 
 ## Files
 
