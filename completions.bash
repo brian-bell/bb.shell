@@ -6,18 +6,18 @@
 
 # Load the bash-completion package from the first location that exists.
 # Covers Homebrew (Apple Silicon / Intel) and common Linux paths.
-for _bbbash_bc in \
+for _bb_bc in \
   /opt/homebrew/etc/profile.d/bash_completion.sh \
   /usr/local/etc/profile.d/bash_completion.sh \
   /usr/share/bash-completion/bash_completion \
   /etc/bash_completion; do
-  if [ -r "$_bbbash_bc" ]; then
+  if [ -r "$_bb_bc" ]; then
     # shellcheck disable=SC1090
-    . "$_bbbash_bc"
+    . "$_bb_bc"
     break
   fi
 done
-unset _bbbash_bc
+unset _bb_bc
 
 # Readline tweaks (interactive shells only; `bind` needs a terminal).
 case $- in

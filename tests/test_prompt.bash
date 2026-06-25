@@ -31,12 +31,12 @@ trap 'rm -rf "$tmp"' EXIT
 # --- non-git directory --------------------------------------------------
 mkdir -p "$tmp/plain"
 cd "$tmp/plain"
-( exit 0 ); _bbbash_set_prompt
+( exit 0 ); _bb_set_prompt
 assert_not_contains "$PS1" "git:" "non-git dir has no git segment"
 assert_contains "$PS1" '\[\e[32m\]➜' "exit 0 renders green arrow"
 
 # --- non-zero exit status -----------------------------------------------
-( exit 3 ); _bbbash_set_prompt
+( exit 3 ); _bb_set_prompt
 assert_contains "$PS1" '\[\e[31m\]➜' "non-zero exit renders red arrow"
 
 # --- clean git repo -----------------------------------------------------
@@ -46,14 +46,14 @@ git init -q
 git config user.email t@t.t
 git config user.name t
 git checkout -q -b main 2>/dev/null || true
-( exit 0 ); _bbbash_set_prompt
+( exit 0 ); _bb_set_prompt
 assert_contains "$PS1" "git:" "git repo shows git segment"
 assert_contains "$PS1" "main" "git segment shows branch name"
 assert_not_contains "$PS1" $'\xe2\x9c\x97' "clean repo has no dirty marker"
 
 # --- dirty git repo -----------------------------------------------------
 echo change > "$tmp/clean/file.txt"
-( exit 0 ); _bbbash_set_prompt
+( exit 0 ); _bb_set_prompt
 assert_contains "$PS1" $'\xe2\x9c\x97' "dirty repo shows dirty marker"
 
 # --- detached HEAD falls back to short sha -------------------------------
@@ -61,14 +61,14 @@ git -C "$tmp/clean" add -A
 git -C "$tmp/clean" commit -qm first
 sha="$(git -C "$tmp/clean" rev-parse --short HEAD)"
 git -C "$tmp/clean" checkout -q "$sha" 2>/dev/null
-( exit 0 ); _bbbash_set_prompt
+( exit 0 ); _bb_set_prompt
 assert_contains "$PS1" "$sha" "detached HEAD shows short sha"
 
 # --- prompt escape markers are balanced ---------------------------------
 # Every \[ must have a matching \] or bash miscounts prompt width and corrupts
 # line wrapping. Count without rendering so this runs on any bash.
 cd "$tmp/clean" 2>/dev/null || cd "$tmp"
-( exit 0 ); _bbbash_set_prompt
+( exit 0 ); _bb_set_prompt
 no_open=${PS1//\\\[/}
 no_close=${PS1//\\\]/}
 opens=$(( (${#PS1} - ${#no_open}) / 2 ))
@@ -93,7 +93,7 @@ echo x > seed && git add -A && git commit -qm seed
 # Branch name contains a command substitution; ${IFS} avoids a literal space.
 evil_branch='p$(touch${IFS}'"$marker"')'
 git checkout -q -b "$evil_branch" 2>/dev/null
-( exit 0 ); _bbbash_set_prompt
+( exit 0 ); _bb_set_prompt
 if [ "${BASH_VERSINFO[0]}" -gt 4 ] || { [ "${BASH_VERSINFO[0]}" -eq 4 ] && [ "${BASH_VERSINFO[1]}" -ge 4 ]; }; then
   # ${PS1@P} expands exactly as the prompt is drawn, side effects included.
   : "${PS1@P}"

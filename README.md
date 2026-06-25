@@ -68,11 +68,11 @@ Add shared modules as sibling `.zsh` / `.bash` files and source them from the
 matching entry point:
 
 ```zsh
-source "${_bbzsh_dir}/something.zsh"
+source "${_bb_dir}/something.zsh"
 ```
 
 ```bash
-source "${_bbbash_dir}/something.bash"
+source "${_bb_dir}/something.bash"
 ```
 
 Put machine-specific or private settings in `local.zsh` / `local.bash`.
