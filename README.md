@@ -51,6 +51,9 @@ zsh:
 - `completions.zsh`: completion bootstrap and completion styles.
 - `prompt.zsh`: prompt setup plus small git helper functions.
 - `local.zsh`: optional local-only overrides; ignored by git.
+- `.gitconfig`: reference snapshot of the maintainer's personal git config
+  (aliases, identity, `gh` credential helper). Not loaded by the shell setup;
+  some entries are macOS-specific.
 
 bash:
 

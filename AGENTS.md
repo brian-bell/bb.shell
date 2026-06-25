@@ -13,6 +13,8 @@
 - Prefer small, readable modules over abstractions or plugin-manager behavior.
 - Keep machine-specific settings out of git; use `local.zsh` / `local.bash`,
   which are ignored.
+- `.gitconfig` is a checked-in reference snapshot of the maintainer's personal
+  git config; it is not part of the shell setup and nothing sources it.
 
 ## Checks
 
