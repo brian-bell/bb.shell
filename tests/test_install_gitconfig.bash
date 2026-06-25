@@ -39,13 +39,20 @@ else
   ok "rejects empty identity"
 fi
 
-# --- existing ~/.gitconfig is backed up ---------------------------------
+# --- existing ~/.gitconfig is backed up, with no conflict on reruns ------
 home3="$tmp/home3"; mkdir -p "$home3"; printf 'old\n' > "$home3/.gitconfig"
 printf 'Grace Hopper\ngrace@example.com\n' | HOME="$home3" sh "$script" >/dev/null 2>&1
-if ls "$home3"/.gitconfig.backup.* >/dev/null 2>&1; then
+printf 'Grace Hopper\ngrace@example.com\n' | HOME="$home3" sh "$script" >/dev/null 2>&1
+n_backups="$(ls -d "$home3"/.gitconfig.backup.* 2>/dev/null | wc -l | tr -d ' ')"
+if [ "$n_backups" -ge 1 ]; then
   ok "backs up existing ~/.gitconfig"
 else
   fail "did not back up existing ~/.gitconfig"
+fi
+if [ "$n_backups" -eq 2 ]; then
+  ok "two runs produce two distinct backups (no conflict)"
+else
+  fail "expected 2 distinct backups, got $n_backups"
 fi
 
 # --- a symlinked ~/.gitconfig is detached, not written through ----------

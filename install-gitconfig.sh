@@ -42,7 +42,7 @@ if [ -L "$dest" ]; then
   echo "note: $dest is a symlink to $(readlink "$dest"); replacing it with a regular file"
   rm -f "$dest"
 elif [ -e "$dest" ]; then
-  backup="${dest}.backup.$(date +%Y%m%d%H%M%S)"
+  backup="$(mktemp "${dest}.backup.XXXXXX")"
   cp "$dest" "$backup"
   echo "backed up existing $dest -> $backup"
 fi
