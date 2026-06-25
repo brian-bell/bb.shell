@@ -1,0 +1,45 @@
+[alias]
+    s = status
+    ss = status -s
+    lc = log ORIG_HEAD.. --stat --no-merges
+    lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
+    lo = log --oneline
+    last = log -l HEAD
+    changes = diff -r
+    diffstat = diff --stat -r
+    review = diff HEAD^ HEAD
+    co = checkout
+    cob = checkout -b
+    f = fetch -p
+    p = pull
+    pu = push
+    puf = push -f
+    cm = commit -m
+    cam = commit -am
+    amend = commit -a --amend
+    rc = rebase --continue
+    ra = rebase --abort
+    ba = branch -a
+    bd = branch -D
+    fp = !git fetch && git pull
+    b = branch
+    bdd = "!git branch | grep -v -e 'master' -e 'main' -e 'develop' -e 'gitops' | awk '{print $1}'"
+    bddx = "!git branch | grep -v -e 'master' -e 'main' -e 'develop' -e 'gitops' | awk '{print $1}' | xargs git branch -D"
+[user]
+    name = Brian Bell
+    email = bellbm@gmail.com
+[init]
+    defaultBranch = main
+[pull]
+    rebase = true
+[push]
+    autoSetupRemote = true
+[core]
+    autocrlf = input
+    editor = "subl -nw"
+[credential "https://github.com"]
+	helper = 
+	helper = !/opt/homebrew/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !/opt/homebrew/bin/gh auth git-credential
