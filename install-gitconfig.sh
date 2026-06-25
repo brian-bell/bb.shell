@@ -35,8 +35,13 @@ email="$(ask 'Git user.email' "$default_email")"
 [ -n "$name" ]  || { echo "error: user.name is required"  >&2; exit 1; }
 [ -n "$email" ] || { echo "error: user.email is required" >&2; exit 1; }
 
-# Back up a real existing ~/.gitconfig before overwriting it.
-if [ -e "$dest" ] && [ ! -L "$dest" ]; then
+# Replace a symlinked ~/.gitconfig with a fresh regular file rather than
+# writing through it, which would mutate the link's target (e.g. a dotfiles
+# repo, or this repo's own .gitconfig). Back up a real file before overwriting.
+if [ -L "$dest" ]; then
+  echo "note: $dest is a symlink to $(readlink "$dest"); replacing it with a regular file"
+  rm -f "$dest"
+elif [ -e "$dest" ]; then
   backup="${dest}.backup.$(date +%Y%m%d%H%M%S)"
   cp "$dest" "$backup"
   echo "backed up existing $dest -> $backup"

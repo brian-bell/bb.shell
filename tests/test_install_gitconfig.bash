@@ -48,5 +48,30 @@ else
   fail "did not back up existing ~/.gitconfig"
 fi
 
+# --- a symlinked ~/.gitconfig is detached, not written through ----------
+home4="$tmp/home4"; mkdir -p "$home4"
+printf 'pristine target\n' > "$tmp/external-gitconfig"
+ln -s "$tmp/external-gitconfig" "$home4/.gitconfig"
+printf 'Alan Turing\nalan@example.com\n' | HOME="$home4" sh "$script" >/dev/null 2>&1
+if [ -L "$home4/.gitconfig" ]; then
+  fail "symlink ~/.gitconfig should be replaced with a regular file"
+else
+  ok "replaces symlinked ~/.gitconfig with a regular file"
+fi
+[ "$(cat "$tmp/external-gitconfig")" = "pristine target" ] \
+  && ok "leaves symlink target untouched" || fail "symlink target was mutated"
+[ "$(git config --file "$home4/.gitconfig" user.email)" = "alan@example.com" ] \
+  && ok "writes identity to the new regular file" || fail "identity not written after detach"
+
+# --- a symlink pointing at the repo snapshot does not taint the repo -----
+home5="$tmp/home5"; mkdir -p "$home5"
+ln -s "$repo/.gitconfig" "$home5/.gitconfig"
+printf 'Edsger Dijkstra\nedsger@example.com\n' | HOME="$home5" sh "$script" >/dev/null 2>&1
+if grep -Eq '^[[:space:]]*(name|email)[[:space:]]*=' "$repo/.gitconfig"; then
+  fail "install wrote identity into the repo's tracked .gitconfig"
+else
+  ok "self-pointing symlink leaves repo .gitconfig clean"
+fi
+
 printf '\n%d failure(s)\n' "$fails"
 [ "$fails" -eq 0 ]
