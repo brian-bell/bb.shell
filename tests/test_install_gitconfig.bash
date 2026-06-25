@@ -14,6 +14,13 @@ fail() { printf 'FAIL - %s\n' "$1"; fails=$((fails + 1)); }
 tmp="$(mktemp -d)"
 trap 'rm -rf "$tmp"' EXIT
 
+# Isolate Git's global/system config so the installer's identity pre-fill is
+# empty regardless of the host's ~/.gitconfig or $XDG_CONFIG_HOME/git/config.
+# Without this, the empty-input case can pick up a real identity as a default.
+export GIT_CONFIG_GLOBAL="$tmp/empty-gitconfig"
+export GIT_CONFIG_SYSTEM=/dev/null
+: > "$GIT_CONFIG_GLOBAL"
+
 # --- the committed snapshot carries no identity -------------------------
 if grep -Eq '^[[:space:]]*(name|email)[[:space:]]*=' "$repo/.gitconfig"; then
   fail "committed .gitconfig still has user.name/user.email"
