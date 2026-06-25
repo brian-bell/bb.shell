@@ -52,7 +52,11 @@ zsh:
 - `prompt.zsh`: prompt setup plus small git helper functions.
 - `local.zsh`: optional local-only overrides; ignored by git.
 - `.gitconfig`: reference snapshot of the maintainer's personal git config
-  (aliases, identity, `gh` credential helper). Not loaded by the shell setup.
+  (aliases, `gh` credential helper). Identity (`user.name` / `user.email`) is
+  intentionally not committed. Not loaded by the shell setup.
+- `install-gitconfig.sh`: installs `.gitconfig` as `~/.gitconfig`, prompting for
+  `user.name` / `user.email`. Run with `sh install-gitconfig.sh`; backs up an
+  existing `~/.gitconfig` first.
 
 bash:
 

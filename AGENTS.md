@@ -15,9 +15,15 @@
   which are ignored.
 - `.gitconfig` is a checked-in reference snapshot of the maintainer's personal
   git config; it is not part of the shell setup and nothing sources it.
+  Identity (`user.name` / `user.email`) is intentionally not committed.
+- `install-gitconfig.sh` installs `.gitconfig` as `~/.gitconfig`, prompting for
+  identity. It is POSIX sh (run, not sourced), unlike the `.zsh` / `.bash`
+  modules.
 
 ## Checks
 
 - zsh: `zsh -n bb.zsh ls.zsh completions.zsh prompt.zsh`
 - bash: `bash -n bb.bash ls.bash completions.bash prompt.bash`
 - bash prompt tests: `bash tests/test_prompt.bash`
+- gitconfig installer: `sh -n install-gitconfig.sh` and
+  `bash tests/test_install_gitconfig.bash`
