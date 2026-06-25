@@ -25,9 +25,8 @@
     b = branch
     bdd = "!git branch | grep -v -e 'master' -e 'main' -e 'develop' -e 'gitops' | awk '{print $1}'"
     bddx = "!git branch | grep -v -e 'master' -e 'main' -e 'develop' -e 'gitops' | awk '{print $1}' | xargs git branch -D"
-[user]
-    name = Brian Bell
-    email = bellbm@gmail.com
+# [user] identity is intentionally not committed; install-gitconfig.sh
+# prompts for user.name / user.email and writes them into ~/.gitconfig.
 [init]
     defaultBranch = main
 [pull]
