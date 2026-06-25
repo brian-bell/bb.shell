@@ -1,10 +1,18 @@
-# bbzsh
+# bbzsh / bbbash
 
-`bbzsh` is a small personal zsh setup that replaces the parts of
-oh-my-zsh this repo needs: completions and a git-aware prompt. It has no
-plugin manager, theme engine, background updater, or generated config.
+A small personal shell setup that replaces the parts of oh-my-zsh this repo
+needs: completions and a git-aware prompt. It has no plugin manager, theme
+engine, background updater, or generated config.
+
+Two parallel ports ship the same behavior:
+
+- **zsh** — `bbzsh.zsh` (`*.zsh` modules)
+- **bash** — `bbbash.bash` (`*.bash` modules), works on Linux and macOS
+  (compatible with bash 3.2+)
 
 ## Install
+
+### zsh
 
 Source the entry point from `~/.zshrc`:
 
@@ -12,11 +20,16 @@ Source the entry point from `~/.zshrc`:
 source "$HOME/dev/shell-tools/bbzsh.zsh"
 ```
 
-Open a new shell, or reload your current one:
+### bash
 
-```zsh
-source ~/.zshrc
+Source the entry point from `~/.bashrc`:
+
+```bash
+source "$HOME/dev/shell-tools/bbbash.bash"
 ```
+
+Open a new shell, or reload your current one (`source ~/.zshrc` or
+`source ~/.bashrc`).
 
 ## What It Does
 
@@ -30,26 +43,46 @@ source ~/.zshrc
 
 ## Files
 
+zsh:
+
 - `bbzsh.zsh`: entry point sourced by `.zshrc`.
 - `ls.zsh`: colorized `ls` setup and common aliases.
 - `completions.zsh`: completion bootstrap and completion styles.
 - `prompt.zsh`: prompt setup plus small git helper functions.
 - `local.zsh`: optional local-only overrides; ignored by git.
 
+bash:
+
+- `bbbash.bash`: entry point sourced by `.bashrc`.
+- `ls.bash`: colorized `ls` setup and common aliases.
+- `completions.bash`: `bash-completion` bootstrap and readline tweaks.
+- `prompt.bash`: prompt setup plus small git helper functions.
+- `local.bash`: optional local-only overrides; ignored by git.
+
 ## Customization
 
-Add shared modules as sibling `.zsh` files and source them from `bbzsh.zsh`:
+Add shared modules as sibling `.zsh` / `.bash` files and source them from the
+matching entry point:
 
 ```zsh
 source "${_bbzsh_dir}/something.zsh"
 ```
 
-Put machine-specific or private settings in `local.zsh`.
+```bash
+source "${_bbbash_dir}/something.bash"
+```
+
+Put machine-specific or private settings in `local.zsh` / `local.bash`.
 
 ## Validation
 
-Check zsh syntax without loading the files:
+Check syntax without loading the files, and run the bash prompt tests:
 
 ```zsh
 zsh -n bbzsh.zsh ls.zsh completions.zsh prompt.zsh
+```
+
+```bash
+bash -n bbbash.bash ls.bash completions.bash prompt.bash
+bash tests/test_prompt.bash
 ```
