@@ -17,7 +17,7 @@ Two parallel ports ship the same behavior:
 Source the entry point from `~/.zshrc`:
 
 ```zsh
-source "$HOME/dev/shell-tools/bbzsh.zsh"
+source "$HOME/dev/bb.shell/bbzsh.zsh"
 ```
 
 ### bash
@@ -25,7 +25,7 @@ source "$HOME/dev/shell-tools/bbzsh.zsh"
 Source the entry point from `~/.bashrc`:
 
 ```bash
-source "$HOME/dev/shell-tools/bbbash.bash"
+source "$HOME/dev/bb.shell/bbbash.bash"
 ```
 
 Open a new shell, or reload your current one (`source ~/.zshrc` or
